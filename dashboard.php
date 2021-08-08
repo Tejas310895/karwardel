@@ -38,6 +38,7 @@ $run_assgined_orders = mysqli_query($con,$get_assgined_orders);
 while($row_assgined_orders=mysqli_fetch_array($run_assgined_orders)){
 
   $invoice_no = $row_assgined_orders['invoice_no'];
+  $delivery_charges = $row_assgined_orders['delivery_charges'];
 
   $get_orders = "select * from customer_orders where invoice_no='$invoice_no'";
 
@@ -139,6 +140,7 @@ while($row_assgined_orders=mysqli_fetch_array($run_assgined_orders)){
 <div class="col-md-12 col-lg-12 shadow p-2 rounded bg-white mt-2" style="font-family:Expletus Sans;">
   <div class="row">
     <div class="col-6">
+      <h5><span class="badge badge-warning rounded text-white">You Earn : ₹ <?php echo $delivery_charges; ?></span></h5>
       <h5>ID-<?php echo $invoice_no; ?></h5>
       <h5 class="text-uppercase"><?php echo $c_name; ?></h5>
       <h5 class="text-uppercase"><?php echo $c_contact; ?></h5>
@@ -148,7 +150,19 @@ while($row_assgined_orders=mysqli_fetch_array($run_assgined_orders)){
     if(empty($STATUS)){
 
       ?>
-        <div class="col-6 text-right"> <span class="badge badge-pill badge-danger rounded"><h4 class="text-right mb-0"><small>TO PAY<?php echo $STATUS; ?></small> ₹ <?php echo $grand_total; ?>/-</h4></span></div>
+        <div class="col-6 text-right"> 
+          <span class="badge badge-pill badge-danger rounded"><h4 class="text-right mb-0"><small>TO PAY<?php echo $STATUS; ?></small> ₹ <?php echo $grand_total; ?>/-</h4></span> <br>
+          <?php 
+          
+          $get_link = "select * from payment_links where invoice_id='$invoice_no'";
+          $run_link = mysqli_query($con,$get_link);
+          $count_links = mysqli_num_rows($run_link);
+
+          if($count_links>0){
+          ?>
+          <a href="process_orders.php?order_link=<?php echo $invoice_no; ?>" class="btn btn-info btn-sm py-1 text-white mt-1"><i class="ti-link"></i> Click Here</a>
+        <?php } ?>
+        </div>
       <?php
 
     }else{
@@ -178,9 +192,9 @@ while($row_assgined_orders=mysqli_fetch_array($run_assgined_orders)){
               <?php echo $customer_city; ?>.
   </p>
   <div class="row">
-    <div class="col-6">
-        <button id="show_details" class="btn btn-info text-white" data-toggle="modal" data-target="#KK<?php echo $invoice_no; ?>" title="view">
-            View Deatils
+    <div class="col-6 pr-1">
+        <button id="show_details" class="btn btn-primary text-white" data-toggle="modal" data-target="#KK<?php echo $invoice_no; ?>" title="view">
+            View Details
         </button>
 
       <!-- Modal -->
