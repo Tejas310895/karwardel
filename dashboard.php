@@ -7,7 +7,7 @@ while($row_ledger_amount = mysqli_fetch_array($run_ledger_amount)){
 
   $del_invoice_no = $row_ledger_amount['invoice_no'];
 
-  $get_order_amount = "select sum(due_amount) as order_amount from customer_orders where invoice_no='$del_invoice_no' and order_status='Delivered'";
+  $get_order_amount = "select sum(due_amount) as order_amount from customer_orders where invoice_no='$del_invoice_no' and order_status='Delivered' and product_status='Deliver'";
   $run_order_amount = mysqli_query($con,$get_order_amount);
   $row_order_amount = mysqli_fetch_array($run_order_amount);
 
@@ -42,7 +42,7 @@ $get_settelments = "select sum(settlement_amt) as total_settelments from del_set
         while ($row_orders_count=mysqli_fetch_array($run_orders_count)) {
             $del_invoice_no = $row_orders_count['invoice_no'];
 
-            $get_order_amount = "select sum(due_amount) as order_amount from customer_orders where invoice_no='$del_invoice_no' and order_status='Delivered'";
+            $get_order_amount = "select sum(due_amount) as order_amount from customer_orders where invoice_no='$del_invoice_no' and order_status='Delivered' and product_status='Deliver'";
             $run_order_amount = mysqli_query($con,$get_order_amount);
             $row_order_amount = mysqli_fetch_array($run_order_amount);
 
