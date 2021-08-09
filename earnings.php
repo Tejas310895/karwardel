@@ -29,7 +29,7 @@
                     $run_orders_count = mysqli_query($con,$get_orders_count);
                     $orders_count = mysqli_num_rows($run_orders_count);
 
-                    $get_orders_charges = "select sum(delivery_charges) as orders_charges from orders_delivery_assign where CAST(delivery_assign_created_at as DATE)='$formated_delivery_assign_date'";
+                    $get_orders_charges = "select sum(delivery_charges) as orders_charges from orders_delivery_assign where CAST(delivery_assign_created_at as DATE)='$formated_delivery_assign_date' and delivery_partner_id='$del_partner_id'";
                     $run_orders_charges = mysqli_query($con,$get_orders_charges);
                     $row_orders_charges = mysqli_fetch_array($run_orders_charges);
 
