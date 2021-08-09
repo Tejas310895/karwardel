@@ -1,5 +1,20 @@
 <?php 
 
+$get_ledger_amount = "select * from orders_delivery_assign where delivery_partner_id='$del_partner_id'";
+$run_ledger_amount = mysqli_query($con,$get_ledger_amount);
+$order_total = 0;
+while($row_ledger_amount = mysqli_fetch_array($run_ledger_amount)){
+
+  $del_invoice_no = $row_ledger_amount['invoice_no'];
+
+  $get_order_amount = "select sum(due_amount) as order_amount from customer_orders where invoice_no='$del_invoice_no' and order_status='Delivered'";
+  $run_order_amount = mysqli_query($con,$get_order_amount);
+  $row_order_amount = mysqli_fetch_array($run_order_amount);
+
+  $order_amount = $row_order_amount['order_amount'];
+  $order_total += $order_amount;
+}
+
 $get_del_earnings = "select sum(delivery_charges) as total_earnings from orders_delivery_assign where delivery_partner_id='$del_partner_id'";
 $run_del_earnings = mysqli_query($con,$get_del_earnings);
 $row_del_earnings = mysqli_fetch_array($run_del_earnings);
@@ -24,7 +39,7 @@ $row_settelments = mysqli_fetch_array($run_settelments);
 
 $total_settelments = $row_settelments['total_settelments'];
 
-$balance = ($total_earnings+$total_bonus)-($total_debits+$total_settelments)
+$balance = ($total_earnings+$total_bonus+$order_total)-($total_debits+$total_settelments)
 
 ?>
 <div class="row shadow bg-white px-2 fixed-bottom">
@@ -214,7 +229,6 @@ while($row_assgined_orders=mysqli_fetch_array($run_assgined_orders)){
                                 <th class="text-center">ITEMS</th>
                                 <th class="text-center">QTY</th>
                                 <th class="text-right">PRICE</th>
-                                <th class="text-right">Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -294,7 +308,6 @@ while($row_assgined_orders=mysqli_fetch_array($run_assgined_orders)){
                                 <td class="text-center"><?php echo $pro_title; ?><br><?php echo $pro_desc; ?></td>
                                 <td class="text-center"><?php echo $qty; ?> x ₹ <?php echo $pro_price; ?></td>
                                 <td class="text-right">₹ <?php echo $sub_total; ?></td>
-                                <td class="text-right"><?php echo $pro_status; ?></td>
                             </tr>
                             <?php 
                             
