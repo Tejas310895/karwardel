@@ -67,13 +67,18 @@
                                     </thead>
                                     <tbody>
                                         <?php 
+
+                                        $get_orders_date = "select * from orders_delivery_assign where delivery_partner_id='$del_partner_id' and CAST(delivery_assign_created_at as DATE)='$formated_delivery_assign_date'";
+                                        $run_orders_date = mysqli_query($con,$get_orders_date);
+                                        while($row_orders_date=mysqli_fetch_array($run_orders_date)){
+
+                                        $invoice_no = $row_orders_date['invoice_no'];
                                         
-                                        $get_orders_details = "SELECT * from customer_orders where CAST(del_date as DATE)='$formated_delivery_assign_date'";
+                                        $get_orders_details = "SELECT * from customer_orders where invoice_no='$invoice_no'";
                                         $run_orders_details = mysqli_query($con,$get_orders_details);
-                                        while($row_orders_details=mysqli_fetch_array($run_orders_details)){
+                                        $row_orders_details=mysqli_fetch_array($run_orders_details);
 
                                         $customer_id = $row_orders_details['customer_id'];
-                                        $invoice_no = $row_orders_details['invoice_no'];
 
                                         $get_customer = "select * from customers where customer_id='$customer_id'";
                                         $run_customer = mysqli_query($con,$get_customer);             
