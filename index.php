@@ -1,13 +1,12 @@
 <?php
 
-    session_start();
-    include("includes/db.php");
+if(!isset($_COOKIE['wrn_del_user'])){
 
-    if(!isset($_SESSION['del_id'])){
+  echo "<script>window.open('login.php','_self')</script>";
 
-        echo "<script>window.open('login.php','_self')</script>";
+}else{
 
-    }else{
+include("includes/db.php");
 
 ?>
 <!DOCTYPE html>
@@ -42,11 +41,11 @@
         <a class="navbar-brand brand-logo-mini" href="./?dashboard"><img src="images/karwarslogo.png" alt="logo"/></a>
         <?php 
         
-        $del_partner_id = $_SESSION['del_id'];
+        $del_partner_id = $_COOKIE['wrn_del_user'];
         $get_del_boy = "select * from delivery_partner where  delivery_partner_id='$del_partner_id'";
         $run_del_boy = mysqli_query($con,$get_del_boy);
         $row_del_boy = mysqli_fetch_array($run_del_boy);
-        
+
         $del_boy_code = $row_del_boy['delivery_partner_code'];
         
         ?>

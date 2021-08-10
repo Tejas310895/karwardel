@@ -1,10 +1,13 @@
-<?php 
+<?php
+
+if(!isset($_COOKIE['wrn_del_user'])){
+
+  echo "<script>window.open('login.php','_self')</script>";
+
+}else{
 
 include("includes/db.php");
-
-session_start();
-$del_partner_id = $_SESSION['del_id'];
-
+$del_partner_id = $_COOKIE['wrn_del_user'];
 ?>
 <?php
 if(isset($_POST["limit"], $_POST["start"])){
@@ -108,3 +111,4 @@ if(isset($_POST["limit"], $_POST["start"])){
 </div>
 </div>
 <?php } }?>
+<?php }?>

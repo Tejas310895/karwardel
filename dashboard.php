@@ -33,26 +33,30 @@ $row_debits = mysqli_fetch_array($run_debits);
 
 $total_debits = $row_debits['total_debits'];
 
-$get_settelments = "select sum(settlement_amt) as total_settelments from del_settlements where delivery_partner_id='$delivery_partner_id'";
+$get_settelments = "select sum(settlement_amt) as total_settelments from del_settlements where delivery_partner_id='$del_partner_id'";
         $run_settelments = mysqli_query($con,$get_settelments);
         $row_settelments = mysqli_fetch_array($run_settelments);
 
         $total_settelments = $row_settelments['total_settelments'];
         $order_total = 0;
-        while ($row_orders_count=mysqli_fetch_array($run_orders_count)) {
-            $del_invoice_no = $row_orders_count['invoice_no'];
 
-            $get_order_amount = "select sum(due_amount) as order_amount from customer_orders where invoice_no='$del_invoice_no' and order_status='Delivered' and product_status='Deliver'";
+        $get_order_count = "select * from orders_delivery_assign where delivery_partner_id='$del_partner_id'";
+        $run_order_count = mysqli_query($con,$get_order_count);
+
+        while ($row_orders_count=mysqli_fetch_array($run_order_count)) {
+            $del_count_invoice_no = $row_orders_count['invoice_no'];
+
+            $get_order_amount = "select sum(due_amount) as order_amount from customer_orders where invoice_no='$del_count_invoice_no' and order_status='Delivered' and product_status='Deliver'";
             $run_order_amount = mysqli_query($con,$get_order_amount);
             $row_order_amount = mysqli_fetch_array($run_order_amount);
 
-            $get_payment_status = "select * from paytm where ORDERID='$del_invoice_no'";
+            $get_payment_status = "select * from paytm where ORDERID='$del_count_invoice_no'";
             $run_payment_status = mysqli_query($con,$get_payment_status);
             $row_payment_status = mysqli_fetch_array($run_payment_status);
 
             $txn_status = $row_payment_status['STATUS'];
 
-            $get_discount = "select * from customer_discounts where invoice_no='$del_invoice_no'";
+            $get_discount = "select * from customer_discounts where invoice_no='$del_count_invoice_no'";
             $run_discount = mysqli_query($con,$get_discount);
             $row_discount = mysqli_fetch_array($run_discount);
 
@@ -60,7 +64,7 @@ $get_settelments = "select sum(settlement_amt) as total_settelments from del_set
             $discount_type = $row_discount['discount_type'];
             $discount_amount = $row_discount['discount_amount'];
 
-            $get_del_charges = "select * from order_charges where invoice_id='$del_invoice_no'";
+            $get_del_charges = "select * from order_charges where invoice_id='$del_count_invoice_no'";
             $run_del_charges = mysqli_query($con,$get_del_charges);
             $row_del_charges = mysqli_fetch_array($run_del_charges);
 

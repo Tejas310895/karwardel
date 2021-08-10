@@ -1,7 +1,13 @@
 <?php 
 
-session_start();
-include "includes/db.php";
+ob_start();
+if(isset($_COOKIE['wrn_del_user'])){
+
+  echo "<script>window.open('index.php?dashboard','_self')</script>";
+
+}else{
+
+include("includes/db.php");
 
 ?>
 <!DOCTYPE html>
@@ -101,7 +107,9 @@ include "includes/db.php";
 
           $delivery_partner_id = $row_del_id['delivery_partner_id'];
 
-          $_SESSION['del_id']=$delivery_partner_id;
+          // $_SESSION['del_id']=$delivery_partner_id;
+
+          setcookie("wrn_del_user", $delivery_partner_id, time()+31556926);  /* expire in 1 hour */
 
           echo "<script>alert('Logged in. Welcome Back')</script>";
 
@@ -112,3 +120,5 @@ include "includes/db.php";
     }
 
 ?>
+<?php ob_end_flush(); ?>
+<?php } ?>
