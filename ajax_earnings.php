@@ -90,6 +90,58 @@ if(isset($_POST["limit"], $_POST["start"])){
 
                 $order_total = $row_order_total['order_total'];
 
+                $get_payment_status = "select * from paytm where ORDERID='$invoice_no'";
+                $run_payment_status = mysqli_query($con,$get_payment_status);
+                $row_payment_status = mysqli_fetch_array($run_payment_status);
+
+                $txn_status = $row_payment_status['STATUS'];
+
+                $get_discount = "select * from customer_discounts where invoice_no='$invoice_no'";
+                $run_discount = mysqli_query($con,$get_discount);
+                $row_discount = mysqli_fetch_array($run_discount);
+
+                $coupon_code = $row_discount['coupon_code'];
+                $discount_type = $row_discount['discount_type'];
+                $discount_amount = $row_discount['discount_amount'];
+
+                $get_del_charges = "select * from order_charges where invoice_id='$invoice_no'";
+                $run_del_charges = mysqli_query($con,$get_del_charges);
+                $row_del_charges = mysqli_fetch_array($run_del_charges);
+
+                $del_charges = $row_del_charges['del_charges'];
+
+                if($discount_type==='amount'){
+
+                    if($txn_status==='SUCCESS'){
+                        $grand_total = 0;
+                    }else {
+                            $grand_total = ($order_total+$del_charges)-$discount_amount;
+                        }
+
+                }elseif ($discount_type==='product') {
+
+                    $get_off_pro = "select * from products where product_id='$discount_amount'";
+                    $run_off_pro = mysqli_query($con,$get_off_pro);
+                    $row_off_pro = mysqli_fetch_array($run_off_pro);
+
+                    $off_product_price = $row_off_pro['product_price'];
+
+                    if($txn_status==='SUCCESS'){
+                        $grand_total = 0;
+                    }else {
+                        $grand_total = ($order_total+$del_charges)+$off_product_price;
+                    }
+                    
+                }elseif (empty($discount_type)) {
+
+                    if($txn_status==='SUCCESS'){
+                        $grand_total = 0;
+                    }else {
+                        $grand_total = $order_total+$del_charges;
+                    }
+                    
+                }
+
             ?>
             <tr>
               <td>
