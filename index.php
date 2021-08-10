@@ -22,6 +22,9 @@
   <link rel="stylesheet" href="RoyalUI/template/vendors/ti-icons/css/themify-icons.css">
   <link rel="stylesheet" href="RoyalUI/template/vendors/base/vendor.bundle.base.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Expletus+Sans">
+  <script type="text/javascript" src="js/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.js"></script>
   <!-- endinject -->
   <!-- plugin css for this page -->
   <!-- End plugin css for this page -->
@@ -43,7 +46,7 @@
         $get_del_boy = "select * from delivery_partner where  delivery_partner_id='$del_partner_id'";
         $run_del_boy = mysqli_query($con,$get_del_boy);
         $row_del_boy = mysqli_fetch_array($run_del_boy);
-
+        
         $del_boy_code = $row_del_boy['delivery_partner_code'];
         
         ?>
@@ -193,7 +196,9 @@ include 'includes/footer.php';
     <!-- page-body-wrapper ends -->
   </div>
   <!-- container-scroller -->
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <!-- plugins:js -->
   <script src="RoyalUI/template/vendors/base/vendor.bundle.base.js"></script>
   <!-- endinject -->
