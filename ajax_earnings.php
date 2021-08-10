@@ -95,6 +95,13 @@ if(isset($_POST["limit"], $_POST["start"])){
                 $row_payment_status = mysqli_fetch_array($run_payment_status);
 
                 $txn_status = $row_payment_status['STATUS'];
+                $txn_amount = $row_payment_status['TXNAMOUNT'];
+                
+                if(isset($txn_amount)){
+                    $paid_amt = round($txn_amount, 0);
+                }else{
+                    $paid_amt = 0;
+                }
 
                 $get_discount = "select * from customer_discounts where invoice_no='$invoice_no'";
                 $run_discount = mysqli_query($con,$get_discount);
@@ -112,11 +119,8 @@ if(isset($_POST["limit"], $_POST["start"])){
 
                 if($discount_type==='amount'){
 
-                    if($txn_status==='SUCCESS'){
-                        $grand_total = 0;
-                    }else {
-                            $grand_total = ($order_total+$del_charges)-$discount_amount;
-                        }
+                            $grand_total = (($order_total+$del_charges)-$discount_amount)-$paid_amt;
+
 
                 }elseif ($discount_type==='product') {
 
@@ -126,20 +130,11 @@ if(isset($_POST["limit"], $_POST["start"])){
 
                     $off_product_price = $row_off_pro['product_price'];
 
-                    if($txn_status==='SUCCESS'){
-                        $grand_total = 0;
-                    }else {
-                        $grand_total = ($order_total+$del_charges)+$off_product_price;
-                    }
+                        $grand_total = (($order_total+$del_charges)+$off_product_price)-$paid_amt;
                     
                 }elseif (empty($discount_type)) {
 
-                    if($txn_status==='SUCCESS'){
-                        $grand_total = 0;
-                    }else {
-                        $grand_total = $order_total+$del_charges;
-                    }
-                    
+                        $grand_total = ($order_total+$del_charges)-$paid_amt;                    
                 }
 
             ?>
@@ -148,7 +143,7 @@ if(isset($_POST["limit"], $_POST["start"])){
                 <?php echo $customer_name."</br>".$invoice_no; ?>
               </td>
               <td>
-                <?php echo $order_total; ?>
+                <?php echo $grand_total; ?>
               </td>
               <td>
                 <?php echo $delivery_charges; ?>
