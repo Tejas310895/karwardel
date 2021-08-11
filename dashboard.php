@@ -6,13 +6,6 @@ $order_total = 0;
 while($row_ledger_amount = mysqli_fetch_array($run_ledger_amount)){
 
   $del_invoice_no = $row_ledger_amount['invoice_no'];
-
-  $get_order_amount = "select sum(due_amount) as order_amount from customer_orders where invoice_no='$del_invoice_no' and order_status='Delivered' and product_status='Deliver'";
-  $run_order_amount = mysqli_query($con,$get_order_amount);
-  $row_order_amount = mysqli_fetch_array($run_order_amount);
-
-  $order_amount = $row_order_amount['order_amount'];
-  $order_total += $order_amount;
 }
 
 $get_del_earnings = "select sum(delivery_charges) as total_earnings from orders_delivery_assign where delivery_partner_id='$del_partner_id'";
@@ -50,6 +43,8 @@ $get_settelments = "select sum(settlement_amt) as total_settelments from del_set
             $run_order_amount = mysqli_query($con,$get_order_amount);
             $row_order_amount = mysqli_fetch_array($run_order_amount);
 
+            $order_amount = $row_order_amount['order_amount'];
+
             $get_payment_status = "select * from paytm where ORDERID='$del_count_invoice_no'";
             $run_payment_status = mysqli_query($con,$get_payment_status);
             $row_payment_status = mysqli_fetch_array($run_payment_status);
@@ -70,13 +65,14 @@ $get_settelments = "select sum(settlement_amt) as total_settelments from del_set
 
             $del_charges = $row_del_charges['del_charges'];
 
+            if($txn_status==='SUCCESS'){
+              $grand_total = 0;
+          }else {
+
             if($discount_type==='amount'){
 
-                if($txn_status==='SUCCESS'){
-                    $grand_total = 0;
-                }else {
-                        $grand_total = ($order_amount+$del_charges)-$discount_amount;
-                    }
+                $grand_total = ($order_amount+$del_charges)-$discount_amount;
+                $order_total += $grand_total;
 
               }elseif ($discount_type==='product') {
 
@@ -86,34 +82,30 @@ $get_settelments = "select sum(settlement_amt) as total_settelments from del_set
 
                 $off_product_price = $row_off_pro['product_price'];
 
-                if($txn_status==='SUCCESS'){
-                    $grand_total = 0;
-                }else {
                     $grand_total = ($order_amount+$del_charges)+$off_product_price;
-                }
+                    $order_total += $grand_total;
                 
               }elseif (empty($discount_type)) {
 
-                if($txn_status==='SUCCESS'){
-                    $grand_total = 0;
-                }else {
                     $grand_total = $order_amount+$del_charges;
-                }
-                
+                    $order_total += $grand_total;
               }
-              $order_total += $grand_total;
         }
-
-        $balance = ($total_earnings+$total_bonus+$order_total)-($total_debits+$total_settelments)
-
+      }
 ?>
 <div class="row shadow bg-white px-2 fixed-bottom">
-  <div class="col-6 mt-2"><h4 class="">My Balance</h4></div>
-  <div class="col-6 mt-2 text-right"><h4 class=""><?php echo $balance; ?>/-</h4></div>
+  <div class="col-6 mt-1 text-center border bg-info">
+    <small class="text-center mb-2">Pending AMT</small>
+    <h5 class="mt-1">₹ <?php echo $order_total; ?></h5>
+  </div>
+  <div class="col-6 mt-1 text-center border bg-warning">
+    <small class="text-center mb-2">Pending CHG</small>
+    <h5 class="mt-1">₹ <?php echo ($total_earnings+$total_bonus)-$total_settelments; ?></h5>
+  </div>
 </div>
 <?php 
 
-$get_assgined_orders = "select * from orders_delivery_assign where delivery_partner_id='$del_partner_id'";
+$get_assgined_orders = "select * from orders_delivery_assign where delivery_partner_id='$del_partner_id' order by delivery_assign_updated_at desc";
 $run_assgined_orders = mysqli_query($con,$get_assgined_orders);
 while($row_assgined_orders=mysqli_fetch_array($run_assgined_orders)){
 

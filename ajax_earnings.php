@@ -90,18 +90,18 @@ if(isset($_POST["limit"], $_POST["start"])){
 
                 $order_total = $row_order_total['order_total'];
 
+                $get_order_status = "select * from customer_orders where invoice_no='$invoice_no'";
+                $run_order_status = mysqli_query($con,$get_order_status);
+                $row_order_status = mysqli_fetch_array($run_order_status);
+
+                $order_status = $row_order_status['order_status'];
+
                 $get_payment_status = "select * from paytm where ORDERID='$invoice_no'";
                 $run_payment_status = mysqli_query($con,$get_payment_status);
                 $row_payment_status = mysqli_fetch_array($run_payment_status);
 
                 $txn_status = $row_payment_status['STATUS'];
                 $txn_amount = $row_payment_status['TXNAMOUNT'];
-                
-                if(isset($txn_amount)){
-                    $paid_amt = round($txn_amount, 0);
-                }else{
-                    $paid_amt = 0;
-                }
 
                 $get_discount = "select * from customer_discounts where invoice_no='$invoice_no'";
                 $run_discount = mysqli_query($con,$get_discount);
@@ -119,7 +119,7 @@ if(isset($_POST["limit"], $_POST["start"])){
 
                 if($discount_type==='amount'){
 
-                            $grand_total = (($order_total+$del_charges)-$discount_amount)-$paid_amt;
+                    $grand_total = (($order_total+$del_charges)-$discount_amount);
 
 
                 }elseif ($discount_type==='product') {
@@ -130,25 +130,30 @@ if(isset($_POST["limit"], $_POST["start"])){
 
                     $off_product_price = $row_off_pro['product_price'];
 
-                        $grand_total = (($order_total+$del_charges)+$off_product_price)-$paid_amt;
+                        $grand_total = (($order_total+$del_charges)+$off_product_price);
                     
                 }elseif (empty($discount_type)) {
 
-                        $grand_total = ($order_total+$del_charges)-$paid_amt;                    
+                        $grand_total = ($order_total+$del_charges);                    
                 }
 
+                $checkarray = array('Cancelled','Delivered');
+
+                if(in_array($order_status,$checkarray)){
+
             ?>
-            <tr>
-              <td>
+            <tr class="<?php if($txn_status==='SUCCESS'){echo"bg-success";} ?>">
+              <td class="py-1">
                 <?php echo $customer_name."</br>".$invoice_no; ?>
               </td>
-              <td>
+              <td class="py-1">
                 <?php echo $grand_total; ?>
               </td>
-              <td>
+              <td class="py-1">
                 <?php echo $delivery_charges; ?>
               </td>
             </tr>
+            <?php } ?>
             <?php } ?>
           </tbody>
         </table>
