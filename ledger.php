@@ -29,14 +29,14 @@
                     <tbody>
                     <?php 
                     
-                    $get_settlement = "select * from del_settlements where delivery_partner_id='$del_partner_id'";
-                    $run_settlement = mysqli_query($con,$get_settlement);
-                    while($row_settlement=mysqli_fetch_array($run_settlement)){
+                    $get_salary = "select * from del_payroll where delivery_partner_id='$del_partner_id'";
+                    $run_salary = mysqli_query($con,$get_salary);
+                    while($row_salary=mysqli_fetch_array($run_salary)){
                     
-                    $updated_date = $row_settlement['updated_date'];
-                    $settlement_amt = $row_settlement['settlement_amt'];
-                    $settlement_type = $row_settlement['settlement_type'];
-                    $settlement_ref_id = $row_settlement['settlement_ref_id'];
+                    $updated_date = $row_salary['updated_date'];
+                    $salary_amt = $row_salary['salary_amt'];
+                    $salary_type = $row_salary['salary_type'];
+                    $salary_ref_id = $row_salary['salary_ref_id'];
                     
                     ?>
                     <tr class="text-center table-success">
@@ -44,13 +44,13 @@
                     <?php echo date('d/M/Y',strtotime($updated_date)); ?>
                     </td>
                     <td>
-                    ₹ <?php echo number_format($settlement_amt,2) ?>
+                    ₹ <?php echo number_format($salary_amt,2) ?>
                     </td>
                     <td>
-                        <?php echo $settlement_type; ?>
+                        <?php echo $salary_type; ?>
                     </td>
                     <td>
-                        <?php echo $settlement_ref_id; ?>
+                        <?php echo $salary_ref_id; ?>
                     </td>
                     </tr>
                     <?php } ?>

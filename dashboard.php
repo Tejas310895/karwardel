@@ -1,13 +1,5 @@
 <?php 
 
-$get_ledger_amount = "select * from orders_delivery_assign where delivery_partner_id='$del_partner_id'";
-$run_ledger_amount = mysqli_query($con,$get_ledger_amount);
-$order_total = 0;
-while($row_ledger_amount = mysqli_fetch_array($run_ledger_amount)){
-
-  $del_invoice_no = $row_ledger_amount['invoice_no'];
-}
-
 $get_del_earnings = "select sum(delivery_charges) as total_earnings from orders_delivery_assign where delivery_partner_id='$del_partner_id'";
 $run_del_earnings = mysqli_query($con,$get_del_earnings);
 $row_del_earnings = mysqli_fetch_array($run_del_earnings);
@@ -27,14 +19,21 @@ $row_debits = mysqli_fetch_array($run_debits);
 $total_debits = $row_debits['total_debits'];
 
 $get_settelments = "select sum(settlement_amt) as total_settelments from del_settlements where delivery_partner_id='$del_partner_id'";
-        $run_settelments = mysqli_query($con,$get_settelments);
-        $row_settelments = mysqli_fetch_array($run_settelments);
+$run_settelments = mysqli_query($con,$get_settelments);
+$row_settelments = mysqli_fetch_array($run_settelments);
 
-        $total_settelments = $row_settelments['total_settelments'];
-        $order_total = 0;
+$total_settelments = $row_settelments['total_settelments'];
 
-        $get_order_count = "select * from orders_delivery_assign where delivery_partner_id='$del_partner_id'";
-        $run_order_count = mysqli_query($con,$get_order_count);
+$get_salary = "select sum(salary_amt) as total_salary from del_payroll where delivery_partner_id='$del_partner_id'";
+$run_salary = mysqli_query($con,$get_salary);
+$row_salary = mysqli_fetch_array($run_salary);
+
+$total_salary = $row_salary['total_salary'];
+
+$order_total = 0;
+
+$get_order_count = "select * from orders_delivery_assign where delivery_partner_id='$del_partner_id'";
+$run_order_count = mysqli_query($con,$get_order_count);
 
         while ($row_orders_count=mysqli_fetch_array($run_order_count)) {
             $del_count_invoice_no = $row_orders_count['invoice_no'];
@@ -106,11 +105,11 @@ $get_settelments = "select sum(settlement_amt) as total_settelments from del_set
 <div class="row shadow bg-white px-2 fixed-bottom">
   <div class="col-6 mt-1 text-center border bg-info">
     <small class="text-center mb-2">Pending AMT</small>
-    <h5 class="mt-1">₹ <?php echo $order_total; ?></h5>
+    <h5 class="mt-1">₹ <?php echo $order_total-$total_settelments; ?></h5>
   </div>
   <div class="col-6 mt-1 text-center border bg-warning">
     <small class="text-center mb-2">Pending CHG</small>
-    <h5 class="mt-1">₹ <?php echo ($total_earnings+$total_bonus)-$total_settelments; ?></h5>
+    <h5 class="mt-1">₹ <?php echo ($total_earnings+$total_bonus)-$total_salary; ?></h5>
   </div>
 </div>
 <?php 
