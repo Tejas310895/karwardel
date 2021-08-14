@@ -39,6 +39,12 @@ $get_settelments = "select sum(settlement_amt) as total_settelments from del_set
         while ($row_orders_count=mysqli_fetch_array($run_order_count)) {
             $del_count_invoice_no = $row_orders_count['invoice_no'];
 
+            $get_order_status = "select * from customer_orders where invoice_no='$del_count_invoice_no'";
+            $run_order_status = mysqli_query($con,$get_order_status);
+            $row_order_status = mysqli_fetch_array($run_order_status);
+
+            $order_status_bal = $row_order_status['order_status'];
+
             $get_order_amount = "select sum(due_amount) as order_amount from customer_orders where invoice_no='$del_count_invoice_no' and order_status='Delivered' and product_status='Deliver'";
             $run_order_amount = mysqli_query($con,$get_order_amount);
             $row_order_amount = mysqli_fetch_array($run_order_amount);
@@ -63,7 +69,11 @@ $get_settelments = "select sum(settlement_amt) as total_settelments from del_set
             $run_del_charges = mysqli_query($con,$get_del_charges);
             $row_del_charges = mysqli_fetch_array($run_del_charges);
 
-            $del_charges = $row_del_charges['del_charges'];
+            if($order_status_bal==='Delivered'){
+              $del_charges = $row_del_charges['del_charges'];
+            }else{
+              $del_charges = 0;
+            }
 
             if($txn_status==='SUCCESS'){
               $grand_total = 0;
