@@ -15,6 +15,9 @@
                 <th>
                 Remarks
                 </th>
+                <th>
+                Status
+                </th>
             </tr>
             </thead>
             <tbody>
@@ -28,6 +31,7 @@
             $settlement_amt = $row_settlement['settlement_amt'];
             $settlement_type = $row_settlement['settlement_type'];
             $settlement_ref_id = $row_settlement['settlement_ref_id'];
+            $settlement_status = $row_settlement['settlement_status'];
 
             ?>
             <tr class="text-center table-info">
@@ -43,10 +47,16 @@
                 <td>
                     <?php echo $settlement_ref_id; ?>
                 </td>
+                <td>
+                    <?php echo $settlement_status; ?>
+                </td>
             </tr>
             <?php } ?>
             </tbody>
         </table>
+        <a href="index?add_settelments" class="float">
+            <i class="ti-plus my-float"></i>
+        </a>
     </div>
 </div>
 

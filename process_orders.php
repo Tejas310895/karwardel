@@ -21,6 +21,16 @@ if(isset($_GET['update_order'])){
   $update_charges = "UPDATE order_charges set updated_date='$today' where invoice_id='$update_order'";
   $run_update_charges = mysqli_query($con,$update_charges);
 
+  $get_order_stock = "select * from customer_orders where invoice_no='$update_order'";
+  $run_order_stock = mysqli_query($con,$get_order_stock);
+  while ($row_order_stock=mysqli_fetch_array($run_order_stock)) {
+    $order_stock_pro = $row_order_stock['pro_id'];
+    $order_stock_qty = $row_order_stock['qty'];
+
+    $update_warehouse_stock = "update products set warehouse_stock=warehouse_stock-'$order_stock_qty' where product_id='$order_stock_pro'";
+    $run_update_warehouse_stock = mysqli_query($con,$update_warehouse_stock);
+  }
+
 
     echo "<script>alert('Status Updated')</script>";
 
@@ -36,6 +46,8 @@ if(isset($_GET['order_link'])){
   $get_cust_id = "select * from customer_orders where invoice_no='$order_link'";
   $run_cust_id = mysqli_query($con,$get_cust_id);
   $row_cust_id = mysqli_fetch_array($run_cust_id);
+
+  $check_link = mysqli_num_rows($run_cust_id);
 
   $customer_id = $row_cust_id['customer_id'];
 
@@ -97,7 +109,9 @@ if(isset($_GET['order_link'])){
   
   $payment_link = $row_link['payment_link'];
 
-    $text = "Pay%20Rs.$grand_total.00%20for%20your%20karwars%20grocery%20order%20with%20order%20id%20$order_link%20Please%20click%20the%20link%20$payment_link%20for%20payment%20to%20ensure%20contactless%20delivery";
+  if($check_link>0){
+
+    $text = "Below%20is%20the%20pay%20on%20delivery%20link%20for%20contactless%20delivery%20".$payment_link;
     // $text = "abc";
     //echo $url = "https://smsapi.engineeringtgr.com/send/?Mobile=9636286923&Password=DEZIRE&Message=".$m."&To=".$tel."&Key=parasnovxRI8SYDOwf5lbzkZc6LC0h"; 
     //  $url = "http://api.bulksmsplans.com/api/SendSMS?api_id=API31873059460&api_password=W3cy615F&sms_type=T&encoding=T&sender_id=VRNEAR&phonenumber=91$c_contact&textmessage=$text";
@@ -109,13 +123,20 @@ if(isset($_GET['order_link'])){
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
     
     //grab URL and pass it to the variable. 
-    curl_setopt($ch, CURLOPT_URL, $url); 
+    curl_setopt($ch, CURLOPT_URL, $url);
     
     $result = curl_exec($ch);   
 
-    echo "<script>alert('Link Sent $result')</script>";
+    echo "<script>alert('Link Sent')</script>";
 
     echo "<script>window.open('index.php?dashboard','_self')</script>";
+
+  }else{
+    echo "<script>alert('Link not found')</script>";
+
+    echo "<script>window.open('index.php?dashboard','_self')</script>";
+
+  }
 
 }
 

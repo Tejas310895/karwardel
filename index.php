@@ -28,7 +28,7 @@ include("includes/db.php");
   <!-- plugin css for this page -->
   <!-- End plugin css for this page -->
   <!-- inject:css -->
-  <link rel="stylesheet" href="RoyalUI/template/css/style.css">
+  <link rel="stylesheet" href="RoyalUI/template/css/style.css?v=1">
   <!-- endinject -->
   <link rel="shortcut icon" href="images/karwarslogo.png" />
 </head>
@@ -171,6 +171,12 @@ if(isset($_GET['ledger'])){
 if(isset($_GET['change_pass'])){
                     
   include("change_pass.php");
+  
+}
+
+if(isset($_GET['add_settelments'])){
+                    
+  include("add_settelments.php");
   
 }
 

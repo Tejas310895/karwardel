@@ -18,7 +18,7 @@ $row_debits = mysqli_fetch_array($run_debits);
 
 $total_debits = $row_debits['total_debits'];
 
-$get_settelments = "select sum(settlement_amt) as total_settelments from del_settlements where delivery_partner_id='$del_partner_id'";
+$get_settelments = "select sum(settlement_amt) as total_settelments from del_settlements where delivery_partner_id='$del_partner_id' and settlement_status='active'";
 $run_settelments = mysqli_query($con,$get_settelments);
 $row_settelments = mysqli_fetch_array($run_settelments);
 
@@ -228,7 +228,7 @@ while($row_assgined_orders=mysqli_fetch_array($run_assgined_orders)){
     </div>
     <?php 
     
-    if(empty($STATUS)){
+    if(!isset($STATUS)){
 
       ?>
         <div class="col-6 text-right"> 
@@ -259,7 +259,7 @@ while($row_assgined_orders=mysqli_fetch_array($run_assgined_orders)){
     
     ?>
 
-    <div class="col-6 text-right"> <span class="badge badge-pill badge-danger rounded"><h4 class="text-right mb-0"><small>TO PAY<?php echo $STATUS; ?></small> ₹ <?php echo $grand_total; ?>/-</h4></span></div>
+    <div class="col-6 text-right"> <span class="badge badge-pill badge-danger rounded"><h4 class="text-right mb-0"><small>TO PAY</small> ₹ <?php echo $grand_total; ?>/-</h4></span></div>
 
       <?php
       }
