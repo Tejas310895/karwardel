@@ -36,7 +36,7 @@
 
 <?php 
 
-if(isset($_POST['update_profile'])){
+if(isset($_POST['update_settlements'])){
 
     $settlement_amt = $_POST['settlement_amt'];
     $settlement_type = $_POST['settlement_type'];
@@ -45,23 +45,19 @@ if(isset($_POST['update_profile'])){
     date_default_timezone_set('Asia/Kolkata');
     $today = date("Y-m-d H:i:s");
 
-    $update_del_settlement = "update del_settlements set settlement_amt='$settlement_amt',
-                                                      settlement_type='$settlement_type',
-                                                      settlement_ref_id	='$settlement_ref_id',
-                                                      settlement_status='inactive',
-                                                      updated_date='$today'
-                                                      where delivery_partner_id='$del_partner_id'";
-    $run_update_del_settlement = mysqli_query($con,$update_del_settlement);
+    $insert_settlement = "insert into del_settlements (delivery_partner_id,settlement_amt,settlement_type,settlement_ref_id,settlement_status,updated_date) 
+    values ('$del_partner_id','$settlement_amt','$settlement_type','$settlement_ref_id','inactive','$today')";
+    $run_update_del_settlement = mysqli_query($con,$insert_settlement);
 
     if($run_update_del_settlement){
 
         echo "<script>alert('Details Updated')</script>";
-        echo "<script>window.open('index.php?profile','_self')</script>";
+        echo "<script>window.open('index.php?settelments','_self')</script>";
 
     }else{
 
         echo "<script>alert('Update Failed Try Again')</script>";
-        echo "<script>window.open('index.php?profile','_self')</script>";
+        echo "<script>window.open('index.php?settelments','_self')</script>";
 
     }
 }
