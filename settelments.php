@@ -55,7 +55,7 @@
             </tbody>
         </table>
         <a href="index?add_settelments" class="float">
-            <i class="ti-plus my-float"></i>
+            <i class="now-ui-icons ui-1_simple-add my-float"></i>
         </a>
     </div>
 </div>

@@ -1,62 +1,68 @@
-<!-- partial -->
-<div class="container-fluid page-body-wrapper px-2">
-      <!-- partial:partials/_sidebar.html -->
-      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+<div class="sidebar" data-color="orange">
+      <!--
+        Tip 1: You can change the color of the sidebar using: data-color="blue | green | orange | red | yellow"
+        -->
+      <div class="logo bg-white">
+        <a href="#" class="simple-text logo-normal">
+            <img src="images/karwarslogo.png" class="mx-auto d-block" width="100" height="60" alt="">
+        </a>
+      </div>
+      <div class="sidebar-wrapper" id="sidebar-wrapper">
         <ul class="nav">
-          <li class="nav-item">
-            <a class="nav-link" href="index?dashboard">
-              <i class="ti-dashboard menu-icon"></i>
-              <span class="menu-title">Dashboard</span>
+          <li class="<?php if(isset($_GET['dashboard'])){echo "active";} ?>">
+            <a href="index.php?dashboard">
+              <i class="now-ui-icons design_app"></i>
+              <p>Orders</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="index?earnings">
-              <i class="ti-money menu-icon"></i>
-              <span class="menu-title">Earnings</span>
+          <li class="<?php if(isset($_GET['earnings'])){echo "active";} ?>">
+            <a href="index.php?earnings">
+              <i class="now-ui-icons business_chart-bar-32"></i>
+              <p>Earnings</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="index?bonus">
-              <i class="ti-gift menu-icon"></i>
-              <span class="menu-title">Bonus</span>
+          <li class="<?php if(isset($_GET['bonus'])){echo "active";} ?>">
+            <a href="index.php?bonus">
+              <i class="now-ui-icons business_chart-bar-32"></i>
+              <p>Bonus</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="index?settelments">
-              <i class="ti-wallet menu-icon"></i>
-              <span class="menu-title">Settlements</span>
+          <li class="<?php if(isset($_GET['settlements'])){echo "active";} ?>">
+            <a href="index.php?settelments">
+              <i class="now-ui-icons business_chart-bar-32"></i>
+              <p>Settlements</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="index?ledger">
-              <i class="ti-agenda menu-icon"></i>
-              <span class="menu-title">Ledger</span>
+          <li class="<?php if(isset($_GET['ledger'])){echo "active";} ?>">
+            <a href="index.php?ledger">
+              <i class="now-ui-icons business_chart-bar-32"></i>
+              <p>Ledger</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="index?profile">
-              <i class="ti-id-badge menu-icon"></i>
-              <span class="menu-title">Profile</span>
+          <li class="<?php if(isset($_GET['profile'])){echo "active";} ?>">
+            <a href="index.php?profile">
+              <i class="now-ui-icons business_chart-bar-32"></i>
+              <p>Profile</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="index?change_pass">
-              <i class="ti-key menu-icon"></i>
-              <span class="menu-title">Change Password</span>
+          <li class="<?php if(isset($_GET['change_pass'])){echo "active";} ?>">
+            <a href="index.php?change_pass">
+              <i class="now-ui-icons business_chart-bar-32"></i>
+              <p>Change Password</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="index?notification">
-              <i class="ti-bell menu-icon"></i>
-              <span class="menu-title">Notifications</span>
+          <li class="<?php if(isset($_GET['notifications'])){echo "active";} ?>">
+            <a href="index.php?notification">
+              <i class="now-ui-icons business_chart-bar-32"></i>
+              <p>Notifications</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="logout">
-              <i class="ti-power-off menu-icon"></i>
-              <span class="menu-title">Logout</span>
+          <li class="">
+            <a href="logout.php" onclick="return confirm('Are you sure?')">
+              <i class="now-ui-icons media-1_button-power"></i>
+              <p>Logout</p>
             </a>
           </li>
         </ul>
-      </nav>
-      <!-- partial -->
+      </div>
+    </div>

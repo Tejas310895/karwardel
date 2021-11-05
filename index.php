@@ -1,4 +1,21 @@
-<?php
+<!--
+
+=========================================================
+* Now UI Dashboard - v1.5.0
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/now-ui-dashboard
+* Copyright 2019 Creative Tim (http://www.creative-tim.com)
+
+* Designed by www.invisionapp.com Coded by www.creative-tim.com
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+-->
+
+<?php 
 
 if(!isset($_COOKIE['wrn_del_user'])){
 
@@ -13,212 +30,169 @@ include("includes/db.php");
 <html lang="en">
 
 <head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Karwars Team</title>
-  <!-- plugins:css -->
-  <link rel="stylesheet" href="RoyalUI/template/vendors/ti-icons/css/themify-icons.css">
-  <link rel="stylesheet" href="RoyalUI/template/vendors/base/vendor.bundle.base.css">
+  <meta charset="utf-8" />
+  <link rel="apple-touch-icon" sizes="76x76" href="images/karwarslogo.png">
+  <link rel="icon" type="image/png" href="images/karwarslogo.png">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>
+    Karwars Seller Panel
+  </title>
+  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
+  <!--     Fonts and icons     -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <!-- CSS Files -->
+  <link href="now-ui-dashboard/assets/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="now-ui-dashboard/assets/css/now-ui-dashboard.css?v=1.5.0" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Expletus+Sans">
-  <script type="text/javascript" src="js/jquery-3.5.1.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.js"></script>
-  <!-- endinject -->
-  <!-- plugin css for this page -->
-  <!-- End plugin css for this page -->
-  <!-- inject:css -->
-  <link rel="stylesheet" href="RoyalUI/template/css/style.css?v=1">
-  <!-- endinject -->
-  <link rel="shortcut icon" href="images/karwarslogo.png" />
+  <!-- CSS Just for demo purpose, don't include it in your project -->
+  <link href="now-ui-dashboard/assets/demo/demo.css" rel="stylesheet" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 </head>
-<body>
-  <div class="container-scroller">
-    <!-- partial:partials/_navbar.html -->
-    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-        <a class="navbar-brand brand-logo mr-5" href="./?dashboard"><img src="images/karwarslogo.png" class="mr-2" alt="logo"/></a>
-        <a class="navbar-brand brand-logo-mini" href="./?dashboard"><img src="images/karwarslogo.png" alt="logo"/></a>
-        <?php 
-        
-        $del_partner_id = $_COOKIE['wrn_del_user'];
-        $get_del_boy = "select * from delivery_partner where  delivery_partner_id='$del_partner_id'";
-        $run_del_boy = mysqli_query($con,$get_del_boy);
-        $row_del_boy = mysqli_fetch_array($run_del_boy);
 
-        $del_boy_code = $row_del_boy['delivery_partner_code'];
-        
-        ?>
-        <h3 class="text-dark text-center text-uppercase mb-0"><?php echo $del_boy_code; ?></h3>
-        <img src="images/valet.png" alt="" class="img-fluid border-0" style="background-color:transparent;" width="40px">
-      </div>
-      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
-        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
-          <span class="ti-view-list"></span>
-        </button>
-        <!-- <ul class="navbar-nav mr-lg-2">
-          <li class="nav-item nav-search d-none d-lg-block">
-            <div class="input-group">
-              <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
-                <span class="input-group-text" id="search">
-                  <i class="ti-search"></i>
-                </span>
+<body class="">
+    <div class="wrapper ">
+      <?php 
+      
+      include("includes/sidebar.php");
+
+      ?>
+      <div class="main-panel" id="main-panel">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+          <div class="container-fluid">
+            <div class="navbar-wrapper">
+              <div class="navbar-toggle">
+                <button type="button" class="navbar-toggler">
+                  <span class="navbar-toggler-bar bar1"></span>
+                  <span class="navbar-toggler-bar bar2"></span>
+                  <span class="navbar-toggler-bar bar3"></span>
+                </button>
               </div>
-              <input type="text" class="form-control" id="navbar-search-input" placeholder="Search now" aria-label="search" aria-describedby="search">
+              <a class="navbar-brand mt-2" href="#"><?php if(isset($_GET['orders'])){echo "Orders Dashboard";}elseif(isset($_GET['reports'])){echo "Order Reports";}else{echo "Dashboard";} ?></a>
             </div>
-          </li>
-        </ul> -->
-        <ul class="navbar-nav navbar-nav-right">
-          <li class="nav-item dropdown mr-1">
-            <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center" id="messageDropdown" href="#" data-toggle="dropdown">
-              <i class="ti-bell mx-0"></i>
-                <!-- <span class="badge badge-primary bell-badge rounded-circle px-2 py-1">
-                  <h6 class="mb-0">4</h6>
-                </span> -->
-            </a>
-            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="messageDropdown">
-              <p class="mb-0 font-weight-normal float-left dropdown-header">Notification</p>
-              <?php 
+            <?php 
+        
+              $del_partner_id = $_COOKIE['wrn_del_user'];
+              $get_del_boy = "select * from delivery_partner where  delivery_partner_id='$del_partner_id'";
+              $run_del_boy = mysqli_query($con,$get_del_boy);
+              $row_del_boy = mysqli_fetch_array($run_del_boy);
 
-              $get_instant_noti = "select * from del_notifications where delivery_partner_id='$del_partner_id'";
-              $run_instant_noti = mysqli_query($con,$get_instant_noti);
-              $noti_count = mysqli_num_rows($run_instant_noti);
-              while($row_instant_noti=mysqli_fetch_array($run_instant_noti)){
-
-                  $noti_subject = $row_instant_noti['notification_subject'];
-                  $noti_content = $row_instant_noti['notification_content'];
-                  $noti_status = $row_instant_noti['notification_status'];
-
+              $del_boy_code = $row_del_boy['delivery_partner_code'];
+              
               ?>
-              <a class="dropdown-item">
-                <div class="item-thumbnail">
-                    <h4><i class="ti-bell bg-secondary rounded-circle p-2 mr-0"></i></h4>
-                </div>
-                <div class="item-content flex-grow">
-                  <h6 class="ellipsis font-weight-normal"><?php echo $noti_subject; ?>
-                  </h6>
-                  <p class="font-weight-light small-text text-muted mb-0">
-                  <?php echo substr($noti_content,0,36).'...'; ?>
-                  </p>
-                </div>
-              </a>
-              <?php } ?>
-              <a class="btn btn-link btn-block btn-lg p-1 text-center <?php if($noti_count<=0){echo"d-none";}?>" href="index?notification"><h4>see all</h4></a>
+            <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-bar navbar-kebab"></span>
+              <span class="navbar-toggler-bar navbar-kebab"></span>
+              <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button> -->
+            <div class="collapse navbar-collapse justify-content-end" id="navigation">
+              <ul class="navbar-nav">
+                <!-- <li class="nav-item">
+                  <a class="nav-link" href="logout.php" onclick="return confirm('Are you sure?')">
+                    <i class="now-ui-icons media-1_button-power"></i>
+                    <p>
+                      <span class="d-lg-none d-md-block">Logout</span>
+                    </p>
+                  </a>
+                </li> -->
+              </ul>
             </div>
-          </li>
-        </ul>
-        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
-          <span class="ti-view-list"></span>
-        </button>
-      </div>
-    </nav>
-<?php 
-
-include 'includes/sidebar.php';
-
-?>
-
-<?php 
-
-if(isset($_GET['dashboard'])){
-                    
-  include("dashboard.php");
-  
-}
-
-if(isset($_GET['clients'])){
-                    
-  include("clients.php");
-  
-}
-
-if(isset($_GET['earnings'])){
-                    
-  include("earnings.php");
-  
-}
-
-if(isset($_GET['bonus'])){
-                    
-  include("bonus.php");
-  
-}
-
-if(isset($_GET['settelments'])){
-                    
-  include("settelments.php");
-  
-}
-
-if(isset($_GET['profile'])){
-                    
-  include("profile.php");
-  
-}
-
-if(isset($_GET['notification'])){
-                    
-  include("notification.php");
-  
-}
-
-if(isset($_GET['ledger'])){
-                    
-  include("ledger.php");
-  
-}
-
-if(isset($_GET['change_pass'])){
-                    
-  include("change_pass.php");
-  
-}
-
-if(isset($_GET['add_settelments'])){
-                    
-  include("add_settelments.php");
-  
-}
-
-?>
-
-<?php 
-
-include 'includes/footer.php';
-
-?>
-
-        <!-- partial:partials/_footer.html -->
-        <!-- <footer class="footer">
-          <div class="d-sm-flex justify-content-center justify-content-sm-between">
-            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">© wernear.com 2020</span>
           </div>
-        </footer> -->
-        <!-- partial -->
+        </nav>
+        <!-- End Navbar -->
+        <div class="panel-header panel-header-lg">
+          <!-- <canvas id="bigDashboardChart"></canvas> -->
         </div>
-      <!-- main-panel ends -->
-    </div>
-    <!-- page-body-wrapper ends -->
+        <div class="content px-0">
+          <?php 
+          
+          if(isset($_GET['dashboard'])){
+                      
+              include("orders.php");
+              
+            }
+
+            if(isset($_GET['clients'])){
+                    
+              include("clients.php");
+              
+            }
+            
+            if(isset($_GET['earnings'])){
+                                
+              include("earnings.php");
+              
+            }
+            
+            if(isset($_GET['bonus'])){
+                                
+              include("bonus.php");
+              
+            }
+            
+            if(isset($_GET['settelments'])){
+                                
+              include("settelments.php");
+              
+            }
+            
+            if(isset($_GET['profile'])){
+                                
+              include("profile.php");
+              
+            }
+            
+            if(isset($_GET['notification'])){
+                                
+              include("notification.php");
+              
+            }
+            
+            if(isset($_GET['ledger'])){
+                                
+              include("ledger.php");
+              
+            }
+            
+            if(isset($_GET['change_pass'])){
+                                
+              include("change_pass.php");
+              
+            }
+            
+            if(isset($_GET['add_settelments'])){
+                                
+              include("add_settelments.php");
+              
+            }
+          
+          ?>
+        </div>
+      </div>
   </div>
-  <!-- container-scroller -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-  <!-- plugins:js -->
-  <script src="RoyalUI/template/vendors/base/vendor.bundle.base.js"></script>
-  <!-- endinject -->
-  <!-- Plugin js for this page-->
-  <script src="RoyalUI/template/vendors/chart.js/Chart.min.js"></script>
-  <!-- End plugin js for this page-->
-  <!-- inject:js -->
-  <script src="RoyalUI/template/js/off-canvas.js"></script>
-  <script src="RoyalUI/template/js/hoverable-collapse.js"></script>
-  <script src="RoyalUI/template/js/template.js"></script>
-  <script src="RoyalUI/template/js/todolist.js"></script>
-  <!-- endinject -->
-  <!-- Custom js for this page-->
-  <script src="RoyalUI/template/js/dashboard.js"></script>
-  <!-- End custom js for this page-->
+  <!--   Core JS Files   -->
+  <script src="now-ui-dashboard/assets/js/core/jquery.min.js"></script>
+  <script src="now-ui-dashboard/assets/js/core/popper.min.js"></script>
+  <script src="now-ui-dashboard/assets/js/core/bootstrap.min.js"></script>
+  <script src="now-ui-dashboard/assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+  <!--  Google Maps Plugin    -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
+  <!-- Chart JS -->
+  <script src="now-ui-dashboard/assets/js/plugins/chartjs.min.js"></script>
+  <!--  Notifications Plugin    -->
+  <script src="now-ui-dashboard/assets/js/plugins/bootstrap-notify.js"></script>
+  <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="now-ui-dashboard/assets/js/now-ui-dashboard.min.js?v=1.5.0" type="text/javascript"></script><!-- Now Ui Dashboard DEMO methods, don't include it in your project! -->
+  <script src="now-ui-dashboard/assets/demo/demo.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Javascript method's body can be found in assets/js/demos.js
+      demo.initDashboardPageCharts();
+
+    });
+  </script>
 </body>
 
 </html>
