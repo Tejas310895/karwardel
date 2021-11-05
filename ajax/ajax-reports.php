@@ -1,277 +1,439 @@
 <?php 
 
-session_start();
-include("../includes/db.php");
+if(!isset($_COOKIE['wrn_del_user'])){
 
-if(!isset($_SESSION['client_email'])){
-
-    echo "<script>window.open('login.php','_self')</script>";
+  echo "<script>window.open('login.php','_self')</script>";
 
 }else{
 
-    $seller_email = $_SESSION['client_email'];
-    $get_client_id = "select * from clients where client_email='$seller_email'";
-    $run_client_id = mysqli_query($con,$get_client_id);
-    $row_client_id = mysqli_fetch_array($run_client_id);
-    $client_id = $row_client_id['client_id'];
+include("../includes/db.php");
 
 ?>
-<?php
-if(isset($_POST["limit"], $_POST["start"])){
-    
-?>
-
 <?php 
-  
-  $get_reports = "SELECT * FROM customer_orders where client_id='$client_id' GROUP BY CAST(del_date as DATE) order by del_date desc LIMIT ".$_POST["start"].", ".$_POST["limit"]."";
-  $run_reports = mysqli_query($con,$get_reports);
-  $counter = 0;
-  while($row_reports = mysqli_fetch_array($run_reports)){
-  $del_date = $row_reports['del_date'];
-  $delivery_date = date('Y-m-d',strtotime($del_date));
-  $display_delivery_date = date('d-M-Y',strtotime($del_date));
 
-  $counter = ++$counter;
-  
-  $get_total_purchase = "select sum(due_amount) as total_purchase from customer_orders where CAST(del_date as DATE)='$delivery_date' and client_id='$client_id' and order_status='Delivered' and product_status='Deliver'";
-  $run_total_purchase = mysqli_query($con,$get_total_purchase);
-  $row_total_purchase = mysqli_fetch_array($run_total_purchase);
+$del_partner_id = $_COOKIE['wrn_del_user'];
 
-  $total_purchase = $row_total_purchase['total_purchase'];
+$get_del_earnings = "select sum(delivery_charges) as total_earnings from orders_delivery_assign where delivery_partner_id='$del_partner_id'";
+$run_del_earnings = mysqli_query($con,$get_del_earnings);
+$row_del_earnings = mysqli_fetch_array($run_del_earnings);
 
-  $get_vendor_total_purchase = "select sum(vendor_due_amount) as vendor_total_purchase from customer_orders where CAST(del_date as DATE)='$delivery_date' and client_id='$client_id' and order_status='Delivered' and product_status='Deliver'";
-  $run_vendor_total_purchase = mysqli_query($con,$get_vendor_total_purchase);
-  $row_vendor_total_purchase = mysqli_fetch_array($run_vendor_total_purchase);
+$total_earnings = $row_del_earnings['total_earnings'];
 
-  $vendor_total_purchase = $row_vendor_total_purchase['vendor_total_purchase'];
+$get_bonus = "select sum(bonus_amt) as total_bonus from del_bonus where delivery_partner_id='$del_partner_id'";
+$run_bonus = mysqli_query($con,$get_bonus);
+$row_bonus = mysqli_fetch_array($run_bonus);
 
-  $get_bill_invoice = "select distinct(invoice_no) from customer_orders where CAST(del_date as DATE)='$delivery_date' and order_status='Delivered'";
-  $run_bill_invoice = mysqli_query($con,$get_bill_invoice);
-  $bill_diff_total = 0;
-  while($row_bill_invoice=mysqli_fetch_array($run_bill_invoice)){
-    $diff_invoice_no = $row_bill_invoice['invoice_no'];
+$total_bonus = $row_bonus['total_bonus'];
 
-    $get_bill_diff = "select * from bill_controller where invoice_no='$diff_invoice_no' and client_id='$client_id'";
-    $run_bill_diff = mysqli_query($con,$get_bill_diff);
-    $row_bill_diff = mysqli_fetch_array($run_bill_diff);
+$get_debits = "select sum(del_debit_amt) as total_debits from del_debits where delivery_partner_id='$del_partner_id'";
+$run_debits = mysqli_query($con,$get_debits);
+$row_debits = mysqli_fetch_array($run_debits);
 
-    $bill_diff_amount = $row_bill_diff['bill_amount'];
-    $bill_diff_total += $bill_diff_amount;
+$total_debits = $row_debits['total_debits'];
+
+$get_settelments = "select sum(settlement_amt) as total_settelments from del_settlements where delivery_partner_id='$del_partner_id' and settlement_status='active'";
+$run_settelments = mysqli_query($con,$get_settelments);
+$row_settelments = mysqli_fetch_array($run_settelments);
+
+$total_settelments = $row_settelments['total_settelments'];
+
+$get_salary = "select sum(salary_amt) as total_salary from del_payroll where delivery_partner_id='$del_partner_id'";
+$run_salary = mysqli_query($con,$get_salary);
+$row_salary = mysqli_fetch_array($run_salary);
+
+$total_salary = $row_salary['total_salary'];
+
+$order_total = 0;
+
+$get_order_count = "select * from orders_delivery_assign where delivery_partner_id='$del_partner_id'";
+$run_order_count = mysqli_query($con,$get_order_count);
+
+        while ($row_orders_count=mysqli_fetch_array($run_order_count)) {
+            $del_count_invoice_no = $row_orders_count['invoice_no'];
+
+            $get_order_status = "select * from customer_orders where invoice_no='$del_count_invoice_no'";
+            $run_order_status = mysqli_query($con,$get_order_status);
+            $row_order_status = mysqli_fetch_array($run_order_status);
+
+            $order_status_bal = $row_order_status['order_status'];
+
+            $get_order_amount = "select sum(due_amount) as order_amount from customer_orders where invoice_no='$del_count_invoice_no' and order_status='Delivered' and product_status='Deliver'";
+            $run_order_amount = mysqli_query($con,$get_order_amount);
+            $row_order_amount = mysqli_fetch_array($run_order_amount);
+
+            $order_amount = $row_order_amount['order_amount'];
+
+            $get_payment_status = "select * from paytm where ORDERID='$del_count_invoice_no'";
+            $run_payment_status = mysqli_query($con,$get_payment_status);
+            $row_payment_status = mysqli_fetch_array($run_payment_status);
+
+            $txn_status = $row_payment_status['STATUS'];
+
+            $get_discount = "select * from customer_discounts where invoice_no='$del_count_invoice_no'";
+            $run_discount = mysqli_query($con,$get_discount);
+            $row_discount = mysqli_fetch_array($run_discount);
+
+            $coupon_code = $row_discount['coupon_code'];
+            $discount_type = $row_discount['discount_type'];
+            $discount_amount = $row_discount['discount_amount'];
+
+            $get_del_charges = "select * from order_charges where invoice_id='$del_count_invoice_no'";
+            $run_del_charges = mysqli_query($con,$get_del_charges);
+            $row_del_charges = mysqli_fetch_array($run_del_charges);
+
+            if($order_status_bal==='Delivered'){
+              $del_charges = $row_del_charges['del_charges'];
+            }else{
+              $del_charges = 0;
+            }
+
+            if($txn_status==='SUCCESS'){
+              $grand_total = 0;
+          }else {
+
+            if($discount_type==='amount'){
+
+                $grand_total = ($order_amount+$del_charges)-$discount_amount;
+                $order_total += $grand_total;
+
+              }elseif ($discount_type==='product') {
+
+                $get_off_pro = "select * from products where product_id='$discount_amount'";
+                $run_off_pro = mysqli_query($con,$get_off_pro);
+                $row_off_pro = mysqli_fetch_array($run_off_pro);
+
+                $off_product_price = $row_off_pro['product_price'];
+
+                    $grand_total = ($order_amount+$del_charges)+$off_product_price;
+                    $order_total += $grand_total;
+                
+              }elseif (empty($discount_type)) {
+
+                    $grand_total = $order_amount+$del_charges;
+                    $order_total += $grand_total;
+              }
+        }
+      }
+?>
+<div class="row shadow bg-white px-2 fixed-bottom">
+  <div class="col-6 mt-1 text-center border bg-info">
+    <small class="text-center mb-2">Pending AMT</small>
+    <h6 class="mt-1" style="margin-bottom:3px;margin-top:0px!important;">₹ <?php echo $order_total-$total_settelments; ?></h6>
+  </div>
+  <div class="col-6 mt-1 text-center border bg-warning">
+    <small class="text-center mb-2">Pending CHG</small>
+    <h6 class="mt-1" style="margin-bottom:3px;margin-top:0px!important;">₹ <?php echo ($total_earnings+$total_bonus)-$total_salary; ?></h6>
+  </div>
+</div>
+<?php 
+
+$get_assgined_orders = "select * from orders_delivery_assign where delivery_partner_id='$del_partner_id' order by delivery_assign_updated_at desc";
+$run_assgined_orders = mysqli_query($con,$get_assgined_orders);
+while($row_assgined_orders=mysqli_fetch_array($run_assgined_orders)){
+
+  $invoice_no = $row_assgined_orders['invoice_no'];
+  $delivery_charges = $row_assgined_orders['delivery_charges'];
+
+  $get_orders = "select * from customer_orders where invoice_no='$invoice_no'";
+
+  $run_orders = mysqli_query($con,$get_orders);
+
+  $order_count = mysqli_num_rows($run_orders);
+
+  $row_orders = mysqli_fetch_array($run_orders);
+
+  $c_id = $row_orders['customer_id'];
+
+  $date = $row_orders['order_date'];
+
+  $add_id = $row_orders['add_id'];
+
+  $order_date = $row_orders['order_date'];
+
+  $order_schedule = $row_orders['order_schedule'];
+
+  $order_status = $row_orders['order_status'];
+
+  $get_total = "SELECT sum(due_amount) AS total FROM customer_orders WHERE invoice_no='$invoice_no' and product_status='Deliver'";
+
+  $run_total = mysqli_query($con,$get_total);
+
+  $row_total = mysqli_fetch_array($run_total);
+
+  $total = $row_total['total'];
+
+  $get_customer = "select * from customers where customer_id='$c_id'";
+
+  $run_customer = mysqli_query($con,$get_customer);
+
+  $row_customer = mysqli_fetch_array($run_customer);
+
+  $c_name = $row_customer['customer_name'];
+
+  $c_contact = $row_customer['customer_contact'];
+
+  $get_add = "select * from customer_address where add_id='$add_id'";
+
+  $run_add = mysqli_query($con,$get_add);
+
+  $row_add = mysqli_fetch_array($run_add);
+
+  $customer_address = $row_add['customer_address'];
+
+  $customer_phase = $row_add['customer_phase'];
+
+  $customer_landmark = $row_add['customer_landmark'];
+
+  $customer_city = $row_add['customer_city'];
+
+  $get_txn_sta = "select * from paytm where ORDERID='$invoice_no'";
+  $run_txn_sta = mysqli_query($con,$get_txn_sta);
+  $row_txn_sta = mysqli_fetch_array($run_txn_sta);
+
+  $STATUS = $row_txn_sta['STATUS'];
+
+  $get_discount = "select * from customer_discounts where invoice_no='$invoice_no'";
+  $run_discount = mysqli_query($con,$get_discount);
+  $row_discount = mysqli_fetch_array($run_discount);
+
+  $coupon_code = $row_discount['coupon_code'];
+  $discount_type = $row_discount['discount_type'];
+  $discount_amount = $row_discount['discount_amount'];
+
+  $get_del_charges = "select * from order_charges where invoice_id='$invoice_no'";
+  $run_del_charges = mysqli_query($con,$get_del_charges);
+  $row_del_charges = mysqli_fetch_array($run_del_charges);
+
+  $del_charges = $row_del_charges['del_charges'];
+
+  if($discount_type==='amount'){
+
+    $grand_total = ($total+$del_charges)-$discount_amount;
+
+  }elseif ($discount_type==='product') {
+
+    $get_off_pro = "select * from products where product_id='$discount_amount'";
+    $run_off_pro = mysqli_query($con,$get_off_pro);
+    $row_off_pro = mysqli_fetch_array($run_off_pro);
+
+    $off_product_price = $row_off_pro['product_price'];
+
+    $grand_total = ($total+$del_charges)+$off_product_price;
+    
+  }elseif (empty($discount_type)) {
+
+    $grand_total = $total+$del_charges;
+    
   }
 
+  $checkarray = array('Cancelled','Delivered');
+
+  if(!in_array($order_status,$checkarray)){
+
 ?>
-<div id="accordion">
-<div class="card">
-  <div class="card-header" id="headingOne">
-    <h5 class="mb-0 text-center">
-      <button class="btn btn-link btn-block" data-toggle="collapse" data-target="#collapse<?php echo $counter; ?>" aria-expanded="true" aria-controls="collapseOne">
-        <h6 class="mb-0">Order Report <br><?php echo $display_delivery_date; ?></h6>
-        <h6 class="mb-0"><small>( Total MRP ₹<?php if($total_purchase>0){echo round($total_purchase, 2);}else{ echo 0;} ?>/- )</small></h6>
-        <h6 class="mb-0"><small>( Total Sell Price ₹<?php if($vendor_total_purchase>0){echo round($vendor_total_purchase, 2);}else{ echo 0;} ?>/- )</small></h6>
-        <h6 class="mb-0"><small>( Additional Amount ₹<?php if($bill_diff_total>0){echo $bill_diff_total;}else{ echo 0;} ?>/- )</small></h6>
-        <h6 class="mb-0"><small>( Grand Total ₹<?php if($total_purchase>0){echo round(($total_purchase+$bill_diff_total), 2);}else{ echo 0;} ?>/- )</small></h6>
-        <i class="now-ui-icons arrows-1_minimal-down"></i>
-      </button>
-    </h5>
+<div class="col-md-12 col-lg-12 shadow p-2 rounded bg-white mt-2" style="font-family:Expletus Sans;">
+  <div class="row">
+    <div class="col-6">
+      <h5><span class="badge badge-warning rounded text-white">You Earn : ₹ <?php echo $delivery_charges; ?></span></h5>
+      <h6>ID-<?php echo $invoice_no; ?></h6>
+      <h6 class="text-uppercase"><?php echo $c_name; ?></h6>
+      <h6 class="text-uppercase"><?php echo $c_contact; ?></h6>
+    </div>
+    <?php 
+    
+    if(!isset($STATUS)){
+
+      ?>
+        <div class="col-6 text-right"> 
+          <span class="badge badge-pill badge-danger rounded"><h4 class="text-right mt-0 mb-0"><small>TO PAY<?php echo $STATUS; ?></small> ₹ <?php echo $grand_total; ?>/-</h4></span> <br>
+          <?php 
+          
+          $get_link = "select * from payment_links where invoice_id='$invoice_no'";
+          $run_link = mysqli_query($con,$get_link);
+          $count_links = mysqli_num_rows($run_link);
+
+          if($count_links>0){
+          ?>
+          <a href="process_orders.php?order_link=<?php echo $invoice_no; ?>" class="btn btn-info btn-sm py-1 text-white mt-1"><i class="ti-link"></i> Click Here</a>
+        <?php } ?>
+        </div>
+      <?php
+
+    }else{
+
+      if($STATUS==='SUCCESS'){
+
+      ?>
+    <div class="col-6 text-right"> <span class="badge badge-pill badge-success rounded"><h4 class="text-right mb-0 mt-0">PAID</h4></span></div>
+
+    <?php 
+    
+      }else{
+    
+    ?>
+
+    <div class="col-6 text-right"> <span class="badge badge-pill badge-danger rounded"><h4 class="text-right mb-0"><small>TO PAY</small> ₹ <?php echo $grand_total; ?>/-</h4></span></div>
+
+      <?php
+      }
+    }
+    
+    ?>
   </div>
-  <div id="collapse<?php echo $counter; ?>" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-  <div class="card-body">
-    <div class="table-responsive">
-        <table class="table text-center">
-          <thead class=" text-primary">
-            <th>
-              Status
-            </th>
-            <th>
-              Order Id
-            </th>
-            <th>
-              Name
-            </th>
-            <th>
-              MRP
-            </th>
-            <th>
-              SELL PRICE
-            </th>
-            <th>
-              Diff Amount
-            </th>
-            <th>
-              Action
-            </th>
-          </thead>
-          <tbody class="text-center">
-            <?php 
-            
-            $get_orders = "select * from customer_orders where CAST(del_date as DATE)='$delivery_date' and client_id='$client_id' group by invoice_no";
-            $run_orders = mysqli_query($con,$get_orders);
-            while($row_orders=mysqli_fetch_array($run_orders)){
-                $invoice_no = $row_orders['invoice_no'];
-                $order_status = $row_orders['order_status'];
-                $customer_id = $row_orders['customer_id'];
+  <h6>Address:- <?php echo $customer_address; ?>, 
+              <?php echo $customer_phase; ?>, 
+              <?php echo $customer_landmark; ?>, 
+              <?php echo $customer_city; ?>.
+  </h6>
+  <div class="row">
+    <div class="col-6 pr-1">
+        <button id="show_details" class="btn btn-primary text-white" data-toggle="modal" data-target="#KK<?php echo $invoice_no; ?>" title="view">
+            View Details
+        </button>
 
-                $get_customer = "select * from customers where customer_id='$customer_id'";
-                $run_customer = mysqli_query($con,$get_customer);
-                $row_customer = mysqli_fetch_array($run_customer);
-                $customer_name = $row_customer['customer_name'];
+      <!-- Modal -->
+      <div class="modal modal-black fade" id="KK<?php echo $invoice_no; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Order Id - <?php echo $invoice_no; ?></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        <i class="tim-icons icon-simple-remove"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body my-3">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="text-center">ITEMS</th>
+                                <th class="text-center">QTY</th>
+                                <th class="text-right">PRICE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
-                $get_order_total = "select sum(due_amount) as order_total from customer_orders where invoice_no='$invoice_no' and client_id='$client_id' and product_status='Deliver'";
-                $run_order_total = mysqli_query($con,$get_order_total);
-                $row_order_total = mysqli_fetch_array($run_order_total);
+                        <?php
+                        
+                        $get_vendor = "select * from customer_orders where invoice_no='$invoice_no' group by client_id";
+                        $run_vendor = mysqli_query($con,$get_vendor);
+                        while ($row_vendor=mysqli_fetch_array($run_vendor)) {
+                        $vendor_id = $row_vendor['client_id'];
 
-                $order_total = $row_order_total['order_total'];
+                        $get_client = "select * from clients where client_id='$vendor_id'";
 
-                $get_vendor_order_total = "select sum(vendor_due_amount) as vendor_order_total from customer_orders where invoice_no='$invoice_no' and client_id='$client_id' and product_status='Deliver'";
-                $run_vendor_order_total = mysqli_query($con,$get_vendor_order_total);
-                $row_vendor_order_total = mysqli_fetch_array($run_vendor_order_total);
+                        $run_client = mysqli_query($con,$get_client);
 
-                $vendor_order_total = $row_vendor_order_total['vendor_order_total'];
+                        $row_client = mysqli_fetch_array($run_client);
 
-                $get_bill_diff_client = "select * from bill_controller where invoice_no='$invoice_no' and client_id='$client_id'";
-                $run_bill_diff_client = mysqli_query($con,$get_bill_diff_client);
-                $row_bill_diff_client = mysqli_fetch_array($run_bill_diff_client);
+                        $client_name = $row_client['client_shop'];
 
-                $bill_amount_client = $row_bill_diff_client['bill_amount'];
+                        echo "<td colspan='5' class='text-center text-uppercase py-2'><h4 class='mb-0'>$client_name</h4></td>";
 
-            ?>
-            <tr>
-              <td>
-                <?php echo $order_status; ?>
-              </td>
-              <td>
-                <?php echo $invoice_no; ?>
-              </td>
-              <td>
-                <?php echo $customer_name; ?>
-              </td>
-              <td>
-                <?php if($order_total>0){echo round($order_total, 2);}else{ echo 0;} ?>
-              </td>
-              <td>
-                <?php if($vendor_order_total>0){echo round($vendor_order_total, 2);}else{ echo 0;} ?>
-              </td>
-              <td>
-                <?php if($bill_amount_client>0){echo round($bill_amount_client, 2);}else{ echo 0;} ?>
-              </td>
-              <td>
-                  <button id="show_details" class="btn btn-danger mx-1" data-toggle="modal" data-target="#cK<?php echo $invoice_no; ?>">
-                  <i class="now-ui-icons travel_info"></i>
-                  View
-                  </button>
-                  <!-- Modal -->
-                  <div class="modal modal-black fade text-dark" id="cK<?php echo $invoice_no; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-                      <div class="modal-dialog" role="document">
-                          <div class="modal-content">
-                          <div class="modal-header">
-                              <h5 class="modal-title" id="exampleModalLongTitle">Order Id - <?php echo $invoice_no; ?></h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                              <i class="tim-icons icon-simple-remove"></i>
-                              </button>
-                          </div>
-                          <div class="modal-body py-0">
-                          <table class="table">
-                              <thead>
-                                  <tr>
-                                     <th class="text-center">ITEMS</th>
-                                      <th class="text-center">QTY</th>
-                                      <th class="text-right">MRP</th>
-                                      <th class="text-right">SELL PRICE</th>
-                                      <!-- <th class="text-right">Status</th> -->
-                                  </tr>
-                              </thead>
-                              <tbody>
+                        $get_pro_id = "select * from customer_orders where invoice_no='$invoice_no' and client_id='$vendor_id'";
 
-                              <?php
-                              
-                              $get_pro_id = "select * from customer_orders where invoice_no='$invoice_no' and client_id='$client_id'";
+                        $run_pro_id = mysqli_query($con,$get_pro_id);
 
-                              $run_pro_id = mysqli_query($con,$get_pro_id);
-                   
-                              while($row_pro_id = mysqli_fetch_array($run_pro_id)){
+                        $counter = 0;
 
-                              $pro_id = $row_pro_id['pro_id'];
+                        while($row_pro_id = mysqli_fetch_array($run_pro_id)){
 
-                              $qty = $row_pro_id['qty'];
+                        $pro_id = $row_pro_id['pro_id'];
 
-                              $sub_total = $row_pro_id['due_amount'];
+                        $qty = $row_pro_id['qty'];
 
-                              $vendor_sub_total = $row_pro_id['vendor_due_amount'];
+                        $sub_total = $row_pro_id['due_amount'];
 
-                              $client_id = $row_pro_id['client_id'];
+                        $client_id = $row_pro_id['client_id'];
 
-                              $pro_price = $sub_total/$qty;                                  
+                        $pro_price = $sub_total/$qty;                                  
 
-                              $pro_status = $row_pro_id['product_status'];
+                        $pro_status = $row_pro_id['product_status'];
 
-                              $get_pro = "select * from products where product_id='$pro_id'";
+                        $get_pro = "select * from products where product_id='$pro_id'";
 
-                              $run_pro = mysqli_query($con,$get_pro);
+                        $run_pro = mysqli_query($con,$get_pro);
 
-                              $row_pro = mysqli_fetch_array($run_pro);
+                        $row_pro = mysqli_fetch_array($run_pro);
 
-                              $pro_title = $row_pro['product_title'];
+                        $pro_title = $row_pro['product_title'];
 
-                              $pro_img1 = $row_pro['product_img1'];
+                        $pro_img1 = $row_pro['product_img1'];
 
-                              // $pro_price = $row_pro['product_price'];
+                        // $pro_price = $row_pro['product_price'];
 
-                              $pro_desc = $row_pro['product_desc'];
-                              
-                              // $sub_total = $pro_price * $qty;
+                        $pro_desc = $row_pro['product_desc'];
+                        
+                        // $sub_total = $pro_price * $qty;
 
-                              $get_min = "select * from admins";
+                        $get_min = "select * from admins";
 
-                              $run_min = mysqli_query($con,$get_min);
+                        $run_min = mysqli_query($con,$get_min);
 
-                              $row_min = mysqli_fetch_array($run_min);
+                        $row_min = mysqli_fetch_array($run_min);
 
-                              $min_price = $row_min['min_order'];
+                        $min_price = $row_min['min_order'];
 
-                              $del_charges = $row_min['del_charges'];
-                              
+                        // $del_charges = $row_min['del_charges'];
 
-                              ?>
-                                  <tr>
-                                      <td class="text-center"><?php echo $pro_title; ?><br><?php echo $pro_desc; ?></td>
-                                      <td class="text-center"><?php echo $qty; ?></td>
-                                      <td class="text-right"><?php if($pro_status==="Deliver"){echo "₹".$sub_total;}else{echo "Cancelled";} ?></td>
-                                      <td class="text-center">₹ <?php echo round($vendor_sub_total, 2); ?></td>
-                                      <!-- <td class="text-right"><?php //echo $pro_status; ?></td> -->
-                                  </tr>
-                                  <?php } ?>
-                              </tbody>
-                          </table>
-                          </div>
-                          <div class="modal-footer">
-                              <button type="button" class="btn btn-primary text-left" data-dismiss="modal">Close</button>
-                              <?php 
-                              
-                              $get_total = "select sum(due_amount) as total from customer_orders where invoice_no='$invoice_no' and client_id='$client_id' and product_status='Deliver'";
-                              $run_total = mysqli_query($con,$get_total);
-                              $row_total = mysqli_fetch_array($run_total);
+                        
+                        $get_del_charges = "select * from order_charges where invoice_id='$invoice_no'";
+                        $run_del_charges = mysqli_query($con,$get_del_charges);
+                        $row_del_charges = mysqli_fetch_array($run_del_charges);
 
-                              $total = $row_total['total'];
-                              
-                              ?>
-                              <!-- <h3 class="card-title">Total - ₹ <?php //echo round($total, 2); ?>/-</h3> -->
-                          </div>
-                          </div>
-                      </div>
-                      </div>
-                      <a href="<?php if($client_id==1){ echo "main_print.php";}else{echo "vendor_print.php";}?>?print=<?php echo $invoice_no; ?>&vendor_id=<?php echo $client_id; ?>" target="_blank" class="btn btn-info mx-1 mt-1">
-                      <i class="now-ui-icons files_paper"></i>
-                      Print
-                      </a>
-              </td>
-            </tr>
-            <?php } ?>
-          </tbody>
-        </table>
-      </div>
+                        $del_charges = $row_del_charges['del_charges'];
+
+                        ?>
+                            <tr>
+                                <td class="text-center"><?php echo $pro_title; ?><br><?php echo $pro_desc; ?></td>
+                                <td class="text-center"><?php echo $qty; ?> x ₹ <?php echo $pro_price; ?></td>
+                                <td class="text-right">₹ <?php echo $sub_total; ?></td>
+                            </tr>
+                            <?php 
+                            
+                            if($discount_type==='product'){
+
+                            $get_off_pro_det = "select * from products where product_id='$discount_amount'";
+                            $run_off_pro_det = mysqli_query($con,$get_off_pro_det);
+                            $row_off_pro_det = mysqli_fetch_array($run_off_pro_det);
+
+                            $off_product_det_client_id = $row_off_pro_det['client_id'];
+                            $off_product_det_product_img1 = $row_off_pro_det['product_img1'];
+                            $off_product_det_product_title = $row_off_pro_det['product_title'];
+                            $off_product_det_product_desc = $row_off_pro_det['product_desc'];
+                            $off_product_det_product_price = $row_off_pro_det['product_price'];
+
+                            $get_off_client = "select * from clients where client_id='$off_product_det_client_id'";
+                            $run_off_client = mysqli_query($con,$get_off_client);
+                            $row_off_client = mysqli_fetch_array($run_off_client);
+
+                            $off_client_name = $row_off_client['client_name'];
+                            
+                            ?>
+                            <tr>
+                            <td colspan="6" class="py-2">
+                                <h5 class="card-title text-center mb-0 text-uppercase" colspan="6">Offer Product Zone</h5>
+                            </td>
+                            </tr>
+                            <tr>
+                                <td class="text-center" colspan="2"><?php echo $off_product_det_product_title; ?><br><?php echo $off_product_det_product_desc; ?></td>
+                                <td class="text-right" colspan="2">₹ <?php echo $off_product_det_product_price; ?></td>
+                            </tr>
+                            <?php } ?>
+                            <?php } ?>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        <!-- Modal -->
+    </div>
+    <div class="col-6">
+      <a href="process_orders.php?update_order=<?php echo $invoice_no; ?>&status=Delivered" onclick="return confirm('Are you sure?')" class="btn btn-success btn-md d-block">Delivered</a>
     </div>
   </div>
 </div>
-</div>
-<?php } }?>
+<?php } ?>
+<?php } ?>
 <?php } ?>
