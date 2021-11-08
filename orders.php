@@ -193,6 +193,30 @@ $run_order_count = mysqli_query($con,$get_order_count);
         $row_txn_sta = mysqli_fetch_array($run_txn_sta);
       
         $STATUS = $row_txn_sta['STATUS'];
+
+        if($discount_type==='amount'){
+
+          $grand_total = ($total+$del_charges)-$discount_amount;
+      
+        }elseif ($discount_type==='product') {
+      
+          $get_off_pro = "select * from products where product_id='$discount_amount'";
+          $run_off_pro = mysqli_query($con,$get_off_pro);
+          $row_off_pro = mysqli_fetch_array($run_off_pro);
+      
+          $off_product_price = $row_off_pro['product_price'];
+      
+          $grand_total = ($total+$del_charges)+$off_product_price;
+          
+        }elseif (empty($discount_type)) {
+      
+          $grand_total = $total+$del_charges;
+          
+        }
+
+        $checkarray = array('Cancelled','Delivered');
+
+        if(!in_array($order_status,$checkarray)){
     
     ?>
           <div class="col-lg-12 col-md-6">
@@ -373,5 +397,6 @@ $run_order_count = mysqli_query($con,$get_order_count);
                 </div>
             </div>
             </div>
+            <?php } ?>
 <?php } ?>
 </div>
