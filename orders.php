@@ -365,16 +365,6 @@ $run_order_count = mysqli_query($con,$get_order_count);
                     
                     // $sub_total = $pro_price * $qty;
 
-                    $get_min = "select * from admins";
-
-                    $run_min = mysqli_query($con,$get_min);
-
-                    $row_min = mysqli_fetch_array($run_min);
-
-                    $min_price = $row_min['min_order'];
-
-                    $del_charges = $row_min['del_charges'];
-
                     ?>
                         <tr>
                             <td class="text-center"><?php echo $pro_title; ?><br><?php echo $pro_desc; ?></td>
