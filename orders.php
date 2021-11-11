@@ -137,7 +137,7 @@ while($row_assgined_orders=mysqli_fetch_array($run_assgined_orders)){
       if($STATUS==='SUCCESS'){
 
       ?>
-    <div class="col-6 text-right"> <span class="badge badge-pill badge-success rounded"><h4 class="text-right mb-0">PAID</h4></span></div>
+    <div class="col-6 text-right"> <span class="badge badge-pill badge-success rounded"><h4 class="text-right mb-0 mt-0">PAID</h4></span></div>
 
     <?php 
     
