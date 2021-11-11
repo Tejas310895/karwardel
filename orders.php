@@ -107,7 +107,7 @@ while($row_assgined_orders=mysqli_fetch_array($run_assgined_orders)){
 <div class="col-md-12 col-lg-12 shadow p-2 rounded bg-white mt-2" style="font-family:Expletus Sans;">
   <div class="row">
     <div class="col-6">
-      <h5><span class="badge badge-warning rounded text-white">You Earn : ₹ <?php echo $delivery_charges; ?></span></h5>
+      <h6><span class="badge badge-warning rounded text-dark">You Earn : ₹ <?php echo $delivery_charges; ?></span></h6>
       <h6>ID-<?php echo $invoice_no; ?></h6>
       <h6 class="text-uppercase"><?php echo $c_name; ?></h6>
       <h6 class="text-uppercase"><?php echo $c_contact; ?></h6>
