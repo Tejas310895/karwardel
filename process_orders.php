@@ -34,7 +34,7 @@ if(isset($_GET['update_order'])){
 
     echo "<script>alert('Status Updated')</script>";
 
-    echo "<script>window.open('index?dashboard','_self')</script>";
+    echo "<script>window.open('index.php?dashboard','_self')</script>";
 
 
 }
